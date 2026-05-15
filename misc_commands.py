@@ -48,7 +48,7 @@ class MiscCommands(commands.Cog):
         ),
         remindees: str = nextcord.SlashOption(
             name="remindees",
-            description="Mention one or more users to remind (e.g. @Alice @Bob).",
+            description="Mention one or more users to remind (e.g. @Ty Snyder @Alan J).",
             required=True
         ),
         text: str = nextcord.SlashOption(
