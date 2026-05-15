@@ -1,4 +1,5 @@
 from nextcord.ext import commands, tasks
+import nextcord
 
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
@@ -7,7 +8,6 @@ import datetime
 from datetime import timedelta
 
 from discord.utils import get
-
 class EventCommands(commands.Cog):
     CHECK_FOR_EVENT_INTERVAL = 15 # in secs
     MAX_CONCUR_EVENT_READS = 10
@@ -28,17 +28,36 @@ class EventCommands(commands.Cog):
 
         self.handle_event_pings.start()
 
+    def parse_event_description(self, description, guild) -> str:
+        roles = description.split("Roles:").split("\n")
+
+        roleObjects = []
+        for role in roles:
+            try:
+                roleObject = nextcord.utils.get(guild.roles, name=role.split("@")[1])
+                roleObjects.append(roleObject)
+            except:
+                ... # Role not found 
+
+        result = "Roles:"
+        for roleObject in roleObjects:
+            result += f"{roleObject.mention} \n"
+
+        return result
+
     async def ping_for_event(self, event):
         start = event['start'].get('dateTime', event['start'].get('date'))
         dt = datetime.datetime.fromisoformat(start.replace('Z', '+00:00'))
         start_formatted = dt.strftime("%b %d, %Y at %I:%M %p")
 
+        channel = self.bot.get_channel(self.channel_id)
+
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins on {start_formatted} \n {description}"
+        message = f"# {title} begins on {start_formatted} \n {self.parse_event_description(description, channel.guild)}" # type: ignore
 
-        await self.bot.get_channel(self.channel_id).send(message) # type: ignore
+        await channel.send(message) # type: ignore
 
     @tasks.loop(seconds=10)
     async def handle_event_pings(self):

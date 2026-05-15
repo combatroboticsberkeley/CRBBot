@@ -10,6 +10,8 @@ CALENDAR_ID = 'cai_scheidler@berkeley.edu'
 SERVICE_ACCOUNT_FILE = 'credentials.json'
 MEETING_CHANNEL_ID = 1504564935261421628
 
+
+
 class CRBBot(commands.Bot):
     COMMAND_PREFIX = "!"
 
