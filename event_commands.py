@@ -8,11 +8,11 @@ import datetime
 from datetime import timedelta
 
 class EventCommands(commands.Cog):
-    CHECK_FOR_EVENT_INTERVAL = 15 # in secs
+    CHECK_FOR_EVENT_INTERVAL = 15  # in secs
     MAX_CONCUR_EVENT_READS = 10
     MINUTES_EARLY_FOR_PING = 1
 
-    def __init__(self, bot, calendar_id:str, service_account_file:str, permitted_roles:list[str]):
+    def __init__(self, bot, calendar_id: str, service_account_file: str, permitted_roles: list[str]):
         self.bot = bot
         self.calendar_id = calendar_id
         self.pinged_events = []
@@ -21,7 +21,7 @@ class EventCommands(commands.Cog):
         SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
         credentials = Credentials.from_service_account_file(
             service_account_file, scopes=SCOPES)
-        
+
         self.calendar_service = build('calendar', 'v3', credentials=credentials)
 
         self.handle_event_pings.start()
@@ -65,54 +65,57 @@ class EventCommands(commands.Cog):
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins on {start_formatted} \n{self.parse_event_description(description, channel.guild)}" # type: ignore
+        message = f"# {title} begins on {start_formatted} \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
 
         print(message)
 
-        await channel.send(message) # type: ignore
+        await channel.send(message)  # type: ignore
 
     @tasks.loop(seconds=10)
     async def handle_event_pings(self):
-        # Get current time in UTC formatted for Google API
         now_time = datetime.datetime.now(datetime.timezone.utc)
         now = now_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
         new_time = now_time + timedelta(minutes=self.MINUTES_EARLY_FOR_PING)
         shouldPingUpperbound = new_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-        
+
         events_result = self.calendar_service.events().list(
-            calendarId = self.calendar_id, 
+            calendarId=self.calendar_id,
             timeMin=now,
             timeMax=shouldPingUpperbound,
-            maxResults=self.MAX_CONCUR_EVENT_READS, 
+            maxResults=self.MAX_CONCUR_EVENT_READS,
             singleEvents=True,
             orderBy='startTime'
         ).execute()
-        
+
         events = events_result.get('items', [])
 
-        for event in events:            
-            if (event not in self.pinged_events):
+        for event in events:
+            if event not in self.pinged_events:
                 self.pinged_events.append(event)
                 await self.ping_for_event(event)
 
-        # remove pinged events that are no longer occuring
         for event in self.pinged_events[:]:
             if event not in events:
                 self.pinged_events.remove(event)
 
     @handle_event_pings.before_loop
     async def before_handle_event_pings(self):
-        await self.bot.wait_until_ready()  # wait until the bot logs in
+        await self.bot.wait_until_ready()
 
-    @commands.command()
-    async def set_meeting_channel(self, ctx:commands.Context):
-        """
-        Sets the channel that pings for meetings to be the current channel
-        """
-        if (not self.contains_permitted_roles(ctx.author.roles)): #type: ignore
+    @nextcord.slash_command(
+        name="set_meeting_channel",
+        description="Sets the current channel as the channel where meeting pings are sent."
+    )
+    async def set_meeting_channel(self, interaction: nextcord.Interaction):
+        if not self.contains_permitted_roles(interaction.user.roles):  # type: ignore
+            await interaction.response.send_message(
+                "You don't have permission to use this command.", ephemeral=True
+            )
             return
 
-        self.bot.meeting_channel_id = ctx.channel.id
+        self.bot.meeting_channel_id = interaction.channel_id
         self.pinged_events = []
-        await ctx.reply(f'Succesfully made the Meeting Channel "{ctx.channel.name}"!') # type: ignore
+        await interaction.response.send_message(
+            f'Successfully made the Meeting Channel "{interaction.channel.name}"!'  # type: ignore
+        )
