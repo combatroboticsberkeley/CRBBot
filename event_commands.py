@@ -39,11 +39,11 @@ class EventCommands(commands.Cog):
 
         for role in roles:
             try:
-                print(role.split("@")[1])
                 roleObject = nextcord.utils.get(guild.roles, name=role.split("@")[1])
                 roleObjects.append(roleObject)
             except:
-                print(f"Role {role} not found")
+                # print(f"Role {role} not found")
+                ...
 
         result = splitDescription[0]
         result += "Roles: \n"
@@ -66,8 +66,6 @@ class EventCommands(commands.Cog):
         description = event.get('description', "This event had no description :(")
 
         message = f"# {title} begins on {start_formatted} \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
-
-        print(message)
 
         await channel.send(message)  # type: ignore
 

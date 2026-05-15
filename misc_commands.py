@@ -22,13 +22,16 @@ class MiscCommands(commands.Cog):
         total_seconds = 0
         matches = re.findall(r'(\d+)([a-zA-Z]+)', delay.lower())
 
+        if not matches:
+            return -1
+
         for amount, unit in matches:
             amount = int(amount)
             if unit in self.unitConversions:
                 total_seconds += amount * self.unitConversions[unit]
             else:
                 await interaction.response.send_message(
-                    "{delay} is not a valid delay format!", ephemeral=True
+                    f"{delay} is not a valid delay format!", ephemeral=True
                 )
                 return -1
 
@@ -46,8 +49,8 @@ class MiscCommands(commands.Cog):
             description="How long to wait before sending the reminder. Supports w/d/h/m/s (e.g. '1h30m', '2d', '45s').",
             required=True
         ),
-        users: str = nextcord.SlashOption(
-            name="users",
+        remindees: str = nextcord.SlashOption(
+            name="remindees",
             description="Mention one or more users to remind (e.g. @Alice @Bob).",
             required=True
         ),
@@ -57,25 +60,16 @@ class MiscCommands(commands.Cog):
             required=True
         )
     ):
-        # Re-resolve mentions from the interaction message
-        mentioned_users = interaction.data.get("resolved", {}).get("users", {})  # type: ignore
-        if mentioned_users:
-            user_mentions = ", ".join(
-                f"<@{uid}>" for uid in mentioned_users.keys()
-            )
-        else:
-            user_mentions = users  # fallback to raw string if no resolved users
-
         delay_secs = await self.parse_delay_amount_to_secs(delay, interaction)
 
         if delay_secs == -1:
             return
 
         await interaction.response.send_message(
-            f'Successfully set reminder for {user_mentions} — "{text}" in {delay}!'
+            f'Successfully set reminder for {remindees} — "{text}" in {delay}!'
         )
         await asyncio.sleep(delay_secs)
-        await interaction.followup.send(f"REMINDER for {user_mentions}: {text}")
+        await interaction.followup.send(f"REMINDER for {remindees}: {text}")
 
     @nextcord.slash_command(
         name="remindme",
