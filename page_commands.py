@@ -8,7 +8,7 @@ class PageCommands(commands.Cog):
         return [self.generate_show_page_command(f.name) 
                 for f in Path('./' + self.PAGES_DIR).iterdir() if f.is_file()]
 
-    def __init__(self, bot: commands.Bot, permitted_roles: list[str]):
+    def __init__(self, bot:commands.Bot, permitted_roles:list[str]):
         self.bot = bot
         self.permitted_roles = permitted_roles
         
@@ -22,7 +22,7 @@ class PageCommands(commands.Cog):
         name = filename.split(".")[0]
 
         @commands.command(name=name)
-        async def show_page_command(ctx: commands.Context):
+        async def show_page_command(ctx:commands.Context):
             f"""
             {content.split("\n")}
             """
@@ -36,7 +36,7 @@ class PageCommands(commands.Cog):
         return True
 
     @commands.command(aliases=["sp"])
-    async def save_page(self, ctx: commands.Context, name: str, text: str):
+    async def save_page(self, ctx:commands.Context, name:str, text:str):
         """
         Saves a page. The page can be viewed by running "!name". 
         """
@@ -53,7 +53,7 @@ class PageCommands(commands.Cog):
         await ctx.reply(f'Succesfully saved Page "{name}"!')
 
     @commands.command(aliases=["dp"])
-    async def del_page(self, ctx: commands.Context, name: str):
+    async def del_page(self, ctx:commands.Context, name:str):
         """
         Deletes a page (if it exists).
         """
@@ -68,7 +68,7 @@ class PageCommands(commands.Cog):
         await ctx.reply(f'Succesfully deleted Page "{name}"!')
 
     @commands.command(aliases=["lp"])
-    async def list_pages(self, ctx: commands.Context):
+    async def list_pages(self, ctx:commands.Context):
         """
         Lists all pages.
         """

@@ -12,6 +12,7 @@ from misc_commands import MiscCommands
 BOT_TOKEN = "MTUwNDU1NTI1ODcxMjU1NTU0MA.GGPrAs.I_ersnCUT-3YbhLqoRkk2jbXvdBTLMgyhDfzFY"
 CALENDAR_ID = 'cai_scheidler@berkeley.edu'
 SERVICE_ACCOUNT_FILE = 'credentials.json'
+MEETING_CHANNEL_ID = 1504564935261421628
 
 class CRBBot(commands.Bot):
     COMMAND_PREFIX = "!"
@@ -26,7 +27,7 @@ class CRBBot(commands.Bot):
 
 crb_bot = CRBBot()
 crb_bot.add_cog(PageCommands(crb_bot, []))
-crb_bot.add_cog(EventCommands(CALENDAR_ID, SERVICE_ACCOUNT_FILE, []))
+crb_bot.add_cog(EventCommands(crb_bot, MEETING_CHANNEL_ID, CALENDAR_ID, SERVICE_ACCOUNT_FILE, []))
 crb_bot.add_cog(MiscCommands(crb_bot, []))
 
 crb_bot.run(BOT_TOKEN)

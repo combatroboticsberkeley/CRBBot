@@ -3,12 +3,12 @@ from nextcord.ext import commands
 import asyncio
 
 class MiscCommands(commands.Cog):
-    def __init__(self, bot: commands.Bot, permitted_roles: list[str]):
+    def __init__(self, bot:commands.Bot, permitted_roles:list[str]):
         self.bot = bot
         self.permitted_roles = permitted_roles
 
     @commands.command(aliases=["rmdme"])
-    async def remind_me(self, ctx: commands.Context, text:str, mins:float):
+    async def remind_me(self, ctx:commands.Context, text:str, mins:float):
         """
         Reminds the user of "text" after "mins" minutes
         """
