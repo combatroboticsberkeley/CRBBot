@@ -26,6 +26,11 @@ class EventCommands(commands.Cog):
 
         self.handle_event_pings.start()
 
+    def contains_permitted_roles(self, roles):
+        if self.permitted_roles:
+            return any(role.name in self.permitted_roles for role in roles)
+        return True
+
     def parse_event_description(self, description, guild) -> str:
         splitDescription = description.split("Roles:")
         roles = splitDescription[1].split("\n")[1:]
@@ -105,6 +110,9 @@ class EventCommands(commands.Cog):
         """
         Sets the channel that pings for meetings to be the current channel
         """
+        if (not self.contains_permitted_roles(ctx.author.roles)): #type: ignore
+            return
+
         self.bot.meeting_channel_id = ctx.channel.id
         self.pinged_events = []
         await ctx.reply(f'Succesfully made the Meeting Channel "{ctx.channel.name}"!') # type: ignore

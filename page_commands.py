@@ -30,7 +30,7 @@ class PageCommands(commands.Cog):
 
         return show_page_command
     
-    def contains_permissible_role(self, roles):
+    def contains_permitted_roles(self, roles):
         if self.permitted_roles:
             return any(role.name in self.permitted_roles for role in roles)
         return True
@@ -40,7 +40,7 @@ class PageCommands(commands.Cog):
         """
         Saves a page. The page can be viewed by running "!name". 
         """
-        if (not self.contains_permissible_role(ctx.author.roles)): #type: ignore
+        if (not self.contains_permitted_roles(ctx.author.roles)): #type: ignore
             return
         
         filename = name + ".txt"
@@ -57,7 +57,7 @@ class PageCommands(commands.Cog):
         """
         Deletes a page (if it exists).
         """
-        if (not self.contains_permissible_role(ctx.author.roles)): #type: ignore
+        if (not self.contains_permitted_roles(ctx.author.roles)): #type: ignore
             return
         
         filename = name + ".txt"
