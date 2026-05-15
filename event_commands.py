@@ -6,17 +6,19 @@ from googleapiclient.discovery import build
 import datetime
 from datetime import timedelta
 
+from discord.utils import get
+
 class EventCommands(commands.Cog):
-    CHECK_FOR_EVENT_INTERVAL = 60 # in secs
+    CHECK_FOR_EVENT_INTERVAL = 15 # in secs
     MAX_CONCUR_EVENT_READS = 10
     MINUTES_EARLY_FOR_PING = 1
 
     def __init__(self, bot:commands.Bot, channel_id:int, calendar_id:str, service_account_file:str, permitted_roles:list[str]):
         self.bot = bot
+        self.channel_id = channel_id
         self.calendar_id = calendar_id
         self.pinged_events = []
         self.permitted_roles = permitted_roles
-        self.channel = self.bot.get_channel(channel_id)
 
         SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
         credentials = Credentials.from_service_account_file(
@@ -34,12 +36,12 @@ class EventCommands(commands.Cog):
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins at {start_formatted} \n {description}"
+        message = f"# {title} begins on {start_formatted} \n {description}"
 
-        await self.channel.send(message) # type: ignore
+        await self.bot.get_channel(self.channel_id).send(message) # type: ignore
 
-    @tasks.loop(seconds=CHECK_FOR_EVENT_INTERVAL)
-    async def handle_event_pings(self, ctx:commands.Context):
+    @tasks.loop(seconds=10)
+    async def handle_event_pings(self):
         # Get current time in UTC formatted for Google API
         now_time = datetime.datetime.now(datetime.timezone.utc)
         now = now_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
@@ -57,7 +59,7 @@ class EventCommands(commands.Cog):
         ).execute()
         
         events = events_result.get('items', [])
-        
+
         for event in events:            
             if (event not in self.pinged_events):
                 self.pinged_events.append(event)
@@ -67,3 +69,7 @@ class EventCommands(commands.Cog):
         for event in self.pinged_events[:]:
             if event not in events:
                 self.pinged_events.remove(event)
+
+    @handle_event_pings.before_loop
+    async def before_handle_event_pings(self):
+        await self.bot.wait_until_ready()  # wait until the bot logs in

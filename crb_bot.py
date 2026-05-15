@@ -5,10 +5,6 @@ from page_commands import PageCommands
 from event_commands import EventCommands
 from misc_commands import MiscCommands
 
-# TO DO:
-
- # make announcement template page and then use for pinging meetings using Google Calendar Integration
-
 BOT_TOKEN = "MTUwNDU1NTI1ODcxMjU1NTU0MA.GGPrAs.I_ersnCUT-3YbhLqoRkk2jbXvdBTLMgyhDfzFY"
 CALENDAR_ID = 'cai_scheidler@berkeley.edu'
 SERVICE_ACCOUNT_FILE = 'credentials.json'
