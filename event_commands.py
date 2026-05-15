@@ -7,14 +7,12 @@ from googleapiclient.discovery import build
 import datetime
 from datetime import timedelta
 
-from crb_bot import CRBBot
-
 class EventCommands(commands.Cog):
     CHECK_FOR_EVENT_INTERVAL = 15 # in secs
     MAX_CONCUR_EVENT_READS = 10
     MINUTES_EARLY_FOR_PING = 1
 
-    def __init__(self, bot:CRBBot, calendar_id:str, service_account_file:str, permitted_roles:list[str]):
+    def __init__(self, bot, calendar_id:str, service_account_file:str, permitted_roles:list[str]):
         self.bot = bot
         self.calendar_id = calendar_id
         self.pinged_events = []
@@ -29,19 +27,22 @@ class EventCommands(commands.Cog):
         self.handle_event_pings.start()
 
     def parse_event_description(self, description, guild) -> str:
-        roles = description.split("Roles:").split("\n")
+        roles = description.split("Roles:")[1].split("\n")
 
         roleObjects = []
         for role in roles:
             try:
+                print(role.split("@")[1])
                 roleObject = nextcord.utils.get(guild.roles, name=role.split("@")[1])
                 roleObjects.append(roleObject)
             except:
-                ... # Role not found 
+                print(f"Role {role} not found")
 
         result = "Roles:"
         for roleObject in roleObjects:
             result += f"{roleObject.mention} \n"
+
+        print(result)
 
         return result
 
@@ -56,6 +57,8 @@ class EventCommands(commands.Cog):
         description = event.get('description', "This event had no description :(")
 
         message = f"# {title} begins on {start_formatted} \n {self.parse_event_description(description, channel.guild)}" # type: ignore
+
+        print(message)
 
         await channel.send(message) # type: ignore
 
@@ -92,3 +95,12 @@ class EventCommands(commands.Cog):
     @handle_event_pings.before_loop
     async def before_handle_event_pings(self):
         await self.bot.wait_until_ready()  # wait until the bot logs in
+
+    @commands.command()
+    async def set_meeting_channel(self, ctx:commands.Context):
+        """
+        Sets the channel that pings for meetings to be the current channel
+        """
+        self.bot.meeting_channel_id = ctx.channel.id
+        self.pinged_events = []
+        await ctx.reply(f'Succesfully made the Meeting Channel "{ctx.channel.name}"!') # type: ignore
