@@ -8,7 +8,7 @@ from misc_commands import MiscCommands
 BOT_TOKEN = "MTUwNDU1NTI1ODcxMjU1NTU0MA.GGPrAs.I_ersnCUT-3YbhLqoRkk2jbXvdBTLMgyhDfzFY"
 CALENDAR_ID = 'cai_scheidler@berkeley.edu'
 SERVICE_ACCOUNT_FILE = 'credentials.json'
-DEFAULT_MEETING_CHANNEL_ID = 1504564935261421628
+DEFAULT_MEETING_CHANNEL_ID = 1504655705087545407
 
 class CRBBot(commands.Bot):
     COMMAND_PREFIX = "!"

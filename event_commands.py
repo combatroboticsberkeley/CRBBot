@@ -27,9 +27,11 @@ class EventCommands(commands.Cog):
         self.handle_event_pings.start()
 
     def parse_event_description(self, description, guild) -> str:
-        roles = description.split("Roles:")[1].split("\n")
+        splitDescription = description.split("Roles:")
+        roles = splitDescription[1].split("\n")[1:]
 
         roleObjects = []
+
         for role in roles:
             try:
                 print(role.split("@")[1])
@@ -38,11 +40,13 @@ class EventCommands(commands.Cog):
             except:
                 print(f"Role {role} not found")
 
-        result = "Roles:"
-        for roleObject in roleObjects:
-            result += f"{roleObject.mention} \n"
-
-        print(result)
+        result = splitDescription[0]
+        result += "Roles: \n"
+        for index, roleObject in enumerate(roleObjects):
+            if roleObject:
+                result += f"{roleObject.mention} \n"
+            else:
+                result += f"{roles[index]} (Couldn't find role) \n"
 
         return result
 
@@ -56,7 +60,7 @@ class EventCommands(commands.Cog):
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins on {start_formatted} \n {self.parse_event_description(description, channel.guild)}" # type: ignore
+        message = f"# {title} begins on {start_formatted} \n{self.parse_event_description(description, channel.guild)}" # type: ignore
 
         print(message)
 
