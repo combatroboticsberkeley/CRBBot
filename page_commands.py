@@ -25,15 +25,15 @@ class PageCommands(commands.Cog):
         return filepath.read_text()
 
     @nextcord.slash_command(
-        name="page",
-        description="Display a saved page by name."
+        name="view_page",
+        description="View a saved page by name."
     )
-    async def page(
+    async def view_page(
         self,
         interaction: nextcord.Interaction,
         name: str = nextcord.SlashOption(
             name="name",
-            description="The name of the page to display.",
+            description="The name of the page you want to view.",
             required=True
         )
     ):

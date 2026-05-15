@@ -18,7 +18,7 @@ class MiscCommands(commands.Cog):
         self.bot = bot
         self.permitted_roles = permitted_roles
 
-    def parse_delay_amount_to_secs(self, delay: str) -> int:
+    async def parse_delay_amount_to_secs(self, delay: str, interaction: nextcord.Interaction) -> int:
         total_seconds = 0
         matches = re.findall(r'(\d+)([a-zA-Z]+)', delay.lower())
 
@@ -26,6 +26,11 @@ class MiscCommands(commands.Cog):
             amount = int(amount)
             if unit in self.unitConversions:
                 total_seconds += amount * self.unitConversions[unit]
+            else:
+                await interaction.response.send_message(
+                    "{delay} is not a valid delay format!", ephemeral=True
+                )
+                return -1
 
         return total_seconds
 
@@ -61,7 +66,10 @@ class MiscCommands(commands.Cog):
         else:
             user_mentions = users  # fallback to raw string if no resolved users
 
-        delay_secs = self.parse_delay_amount_to_secs(delay)
+        delay_secs = await self.parse_delay_amount_to_secs(delay, interaction)
+
+        if delay_secs == -1:
+            return
 
         await interaction.response.send_message(
             f'Successfully set reminder for {user_mentions} — "{text}" in {delay}!'
@@ -87,7 +95,11 @@ class MiscCommands(commands.Cog):
             required=True
         )
     ):
-        delay_secs = self.parse_delay_amount_to_secs(delay)
+        delay_secs = await self.parse_delay_amount_to_secs(delay, interaction)
+
+        if delay_secs == -1:
+            return
+
         user_mention = interaction.user.mention # type: ignore
 
         await interaction.response.send_message(
