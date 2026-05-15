@@ -7,15 +7,15 @@ from googleapiclient.discovery import build
 import datetime
 from datetime import timedelta
 
-from discord.utils import get
+from crb_bot import CRBBot
+
 class EventCommands(commands.Cog):
     CHECK_FOR_EVENT_INTERVAL = 15 # in secs
     MAX_CONCUR_EVENT_READS = 10
     MINUTES_EARLY_FOR_PING = 1
 
-    def __init__(self, bot:commands.Bot, channel_id:int, calendar_id:str, service_account_file:str, permitted_roles:list[str]):
+    def __init__(self, bot:CRBBot, calendar_id:str, service_account_file:str, permitted_roles:list[str]):
         self.bot = bot
-        self.channel_id = channel_id
         self.calendar_id = calendar_id
         self.pinged_events = []
         self.permitted_roles = permitted_roles
@@ -50,7 +50,7 @@ class EventCommands(commands.Cog):
         dt = datetime.datetime.fromisoformat(start.replace('Z', '+00:00'))
         start_formatted = dt.strftime("%b %d, %Y at %I:%M %p")
 
-        channel = self.bot.get_channel(self.channel_id)
+        channel = self.bot.get_channel(self.bot.meeting_channel_id)
 
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
