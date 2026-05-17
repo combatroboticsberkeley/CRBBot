@@ -48,7 +48,7 @@ Integrates with Google Calendar to ping a channel before meetings start. Save/de
 Delay format: combine `w` (weeks), `d` (days), `h` (hours), `m` (minutes), `s` (seconds).
 
 ```
-/remind delay:1h30m remindees:@Ty @Alan message:Finish the CAD review
+/remind delay:1h30m remindees:@Kyler @Ty message:Kyler please pay back Ty's money
 /remindme delay:2d message:Order motor controllers and ESCs
 /remindme delay:45s message:If I'm alive to see this reminder then the test box didn't blow up
 ```
