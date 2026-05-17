@@ -1,0 +1,43 @@
+# CRBBot
+a discord bot for CRB's discord server.
+
+## Pages
+Store and retrieve text snippets in the server.
+> Save/delete require a permitted role (set in code as of rn - Cai).
+
+- `/view_page <name>` -> display a saved page
+- `/save_page <name> <text>` -> create or overwrite a page
+- `/del_page <name>` -> delete a page
+- `/list_pages` -> list all saved page names
+
+**Examples**
+```
+/view_page name:onboarding
+/save_page name:onboarding text:Welcome to CRB! Here's how to get started...
+/del_page name:onboarding
+/list_pages
+```
+
+## Events
+Integrates with Google Calendar to automatically ping a channel ~1 minute before any event starts.
+> Setting the channel requires a permitted role.
+
+- `/set_meeting_channel` -> set the current channel as the destination for meeting pings
+
+**Example**
+```
+/set_meeting_channel
+```
+
+## Reminders
+- `/remind <delay> <remindees> <message>` -> remind one or more mentioned users after a delay
+- `/remindme <delay> <message>` -> remind yourself after a delay
+
+Delay format: combine `w` weeks | `d` days | `h` hours | `m` minutes | `s` seconds
+
+**Examples**
+```
+/remind delay:1h30m remindees:@Kyler @Ty message:Kyler please pay back Ty's money
+/remindme delay:2d message:Order motor controllers and ESCs
+/remindme delay:45s message:If I'm alive to see this reminder then the test box didn't blow up
+```
