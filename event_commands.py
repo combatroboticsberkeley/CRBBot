@@ -28,7 +28,7 @@ class EventCommands(commands.Cog):
 
     def contains_permitted_roles(self, roles):
         if self.permitted_roles:
-            return any(role.name in self.permitted_roles for role in roles)
+            return any([role.name in self.permitted_roles for role in roles])
         return True
 
     def parse_event_description(self, description, guild) -> str:
