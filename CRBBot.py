@@ -7,7 +7,9 @@ from misc_commands import MiscCommands
 
 from CalendarChannelPair import CalendarChannelPair
 
-BOT_TOKEN = "MTUwNDU1NTI1ODcxMjU1NTU0MA.GGPrAs.I_ersnCUT-3YbhLqoRkk2jbXvdBTLMgyhDfzFY"
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class CRBBot(commands.Bot):
     COMMAND_PREFIX = "!"
@@ -20,8 +22,8 @@ class CRBBot(commands.Bot):
     GENERAL_CALENDAR_CHANNEL = "general"
 
     DEFAULT_CALENDAR_CHANNEL_PAIRS = {
-        LEADS_CALENDAR_CHANNEL : CalendarChannelPair("7cbcd686b423d31264c3d44533b4df1c13e9295c838984a6fe44903bc9efc623@group.calendar.google.com", 1504702630985728162),
-        GENERAL_CALENDAR_CHANNEL : CalendarChannelPair("piamd5t3aboib6g98k468o4uds@group.calendar.google.com", 1504670629113364621)
+        LEADS_CALENDAR_CHANNEL : CalendarChannelPair("7cbcd686b423d31264c3d44533b4df1c13e9295c838984a6fe44903bc9efc623@group.calendar.google.com", 1504702630985728162)
+        # GENERAL_CALENDAR_CHANNEL : CalendarChannelPair("piamd5t3aboib6g98k468o4uds@group.calendar.google.com", 1504670629113364621)
     }
 
     def __init__(self):
