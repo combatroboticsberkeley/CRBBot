@@ -69,7 +69,7 @@ rasberry pi 0 ip: 192.168.50.107 (ip subject to change when we go back to Berkel
 
 user: combatroboticsberkeley
 
-pass: crb123
+pass: REDACTED (nice try)
 
 ---
 
@@ -88,6 +88,8 @@ when done, run ```sudo shutdown -h now``` to shut the raspberry pi 0 down before
 
 ### Other Helpful Commands
 ```deactivate``` exits you from the virtual environment (in Python) 
+
+```exit``` exits you from being ssh'ed
 
 ---
 
@@ -114,6 +116,7 @@ Pages allow for the storing and retrieval of any pages of text within the server
 CRBBot is integrated with Google Calendar to ping channels before events start.
 
 `/set_lead_calendar_channel` -> Sets the current channel as the channel where Lead Calendar pings are sent.
+
 `/set_general_calendar_channel` -> Sets the current channel as the channel where General Calendar pings are sent.
 
 ```
