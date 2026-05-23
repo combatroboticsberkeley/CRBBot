@@ -1,1 +1,0 @@
-worker: python3 crb_bot.py
