@@ -2,6 +2,29 @@
 
 a discord bot for CRB's discord server.
 
+## Bot Setup (On the Raspberry Pi 0)
+
+### Important Info
+rasberry pi 0 ip: 192.168.50.107
+
+user: combatroboticsberkeley
+
+pass: crb123
+
+### Setup 
+to ssh into it do ```ssh combatroboticsberkeley@192.168.50.107``` from a cmd and sign in (might need to press enter a couple times after entering password)
+
+then navigate to github_repos/CRBBot (can do ```cd github_repos/CRBBot```)
+
+then run ```source env/bin/activate``` to enter virtual env
+
+then run ```python3 crb_bot.py``` to start the bot
+
+when done, run ```sudo shutdown -h now``` to shut the raspberry pi 0 down before unplugging it
+
+### Other Helpful Commands
+```deactivate``` exits you from the virtual environment (in Python) 
+
 ## Slash Commands
 
 ### Pages
