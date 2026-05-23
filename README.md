@@ -52,7 +52,13 @@ Here is what this example event looks like in Google Calendar:
 
 <img src="./images/BakingCupcakesWithTy2.png" width="400">
 
-> Viewing "Baking Cupcakes with Ty"
+> Viewing "Baking Cupcakes with Ty" on Google Calendar
+
+
+<img src="./images/BakingCupcakesWithTy3.png" width="800">
+
+> Viewing "Baking Cupcakes with Ty" on Discord
+
 
 ---
 

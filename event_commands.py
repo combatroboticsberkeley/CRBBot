@@ -75,6 +75,8 @@ class EventCommands(commands.Cog):
 
         message = f"# {title} begins on {start_formatted} \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
 
+        # print(f"Attempted to send {message} into {channel.name}")
+
         await channel.send(message)  # type: ignore
 
     async def handle_event_pings(self, calendar_channel_pair: CalendarChannelPair):
@@ -99,6 +101,8 @@ class EventCommands(commands.Cog):
             return
 
         events = events_result.get('items', [])
+
+        # print(f'{calendar_channel_pair.calendar_id} has {events} events')
 
         for event in events:
             if event not in self.pinged_events:
