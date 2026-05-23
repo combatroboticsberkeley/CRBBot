@@ -2,6 +2,18 @@
 
 a discord bot for CRB's discord server.
 
+## Google Calendar Setup
+
+### Which Google Calendars does CRBBot read from?
+Text goes here.
+
+---
+
+### What is CRBBot looking for in Google Calendar events?
+CRBBot reads (fill this out)
+
+---
+
 ## Bot Setup (On the Raspberry Pi 0)
 
 ### Important Info
@@ -11,6 +23,8 @@ user: combatroboticsberkeley
 
 pass: crb123
 
+---
+
 ### Setup 
 to ssh into it do ```ssh combatroboticsberkeley@192.168.50.107``` from a cmd and sign in (might need to press enter a couple times after entering password)
 
@@ -18,24 +32,26 @@ then navigate to github_repos/CRBBot (can do ```cd github_repos/CRBBot```)
 
 then run ```source env/bin/activate``` to enter virtual env
 
-then run ```python3 crb_bot.py``` to start the bot
+then run ```python3 CRBBot.py``` to start the bot
 
 when done, run ```sudo shutdown -h now``` to shut the raspberry pi 0 down before unplugging it
+
+---
 
 ### Other Helpful Commands
 ```deactivate``` exits you from the virtual environment (in Python) 
 
+---
+
 ## Slash Commands
 
 ### Pages
-Store and retrieve text snippets in the server. Save/delete require a permitted role (permitted roles set in code as of rn - Cai).
+Pages allow for the storing and retrieval of any pages of text within the server. Saving/deleting pages require a permitted role.
 
-| Command | Description |
-|---|---|
-| `/view_page <name>` | Display a saved page |
-| `/save_page <name> <text>` | Create or overwrite a page |
-| `/del_page <name>` | Delete a page |
-| `/list_pages` | List all saved page names |
+`/view_page <name>` -> Display a saved page 
+ `/save_page <name> <text>`-> Create or overwrite a page
+ `/del_page <name>` -> Delete a page 
+ `/list_pages` -> List all saved page names 
 
 ```
 /view_page name:onboarding
@@ -47,26 +63,24 @@ Store and retrieve text snippets in the server. Save/delete require a permitted 
 ---
 
 ### Events
-Integrates with Google Calendar to ping a channel before meetings start. Save/delete require a permitted role.
+CRBBot is integrated with Google Calendar to ping channels before events start.
 
-| Command | Description |
-|---|---|
-| `/set_meeting_channel` | Set the current channel as the destination for meeting pings |
+`/set_lead_calendar_channel` -> Sets the current channel as the channel where Lead Calendar pings are sent.
+`/set_general_calendar_channel` -> Sets the current channel as the channel where General Calendar pings are sent.
 
 ```
-/set_meeting_channel
+/set_lead_calendar_channel
+/set_general_calendar_channel
 ```
 
-> The bot automatically pings the meeting channel ~1 minute before any event on the linked Google Calendar.
+> CRBBot will ping a channel ~1 minute prior to any event on that channel's associated Google Calendar.
 
 ---
 
 ### Reminders
 
-| Command | Description |
-|---|---|
-| `/remind <delay> <remindees> <message>` | Remind one or more mentioned users after a delay |
-| `/remindme <delay> <message>` | Remind yourself after a delay |
+`/remind <delay> <remindees> <message>` -> Remind one or more mentioned users after a delay 
+`/remindme <delay> <message>` -> Remind yourself after a delay 
 
 Delay format: combine `w` (weeks), `d` (days), `h` (hours), `m` (minutes), `s` (seconds).
 

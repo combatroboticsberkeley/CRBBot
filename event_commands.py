@@ -7,16 +7,20 @@ from googleapiclient.discovery import build
 import datetime
 from datetime import timedelta
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtim
+    from CRBBot import CRBBot
+
+from CalendarChannelPair import CalendarChannelPair
+
 class EventCommands(commands.Cog):
     CHECK_FOR_EVENT_INTERVAL = 15  # in secs
     MAX_CONCUR_EVENT_READS = 10
     MINUTES_EARLY_FOR_PING = 1
 
-    def __init__(self, bot, calendar_id: str, service_account_file: str, permitted_roles: list[str]):
+    def __init__(self, bot: CRBBot, service_account_file: str):
         self.bot = bot
-        self.calendar_id = calendar_id
         self.pinged_events = []
-        self.permitted_roles = permitted_roles
 
         SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
         credentials = Credentials.from_service_account_file(
@@ -24,12 +28,8 @@ class EventCommands(commands.Cog):
 
         self.calendar_service = build('calendar', 'v3', credentials=credentials)
 
-        self.handle_event_pings.start()
-
-    def contains_permitted_roles(self, roles):
-        if self.permitted_roles:
-            return any([role.name in self.permitted_roles for role in roles])
-        return True
+        for calendar_name in self.bot.calendar_channel_pairs:
+            self.handle_event_pings.start(self.bot.calendar_channel_pairs[calendar_name])
 
     def parse_event_description(self, description, guild) -> str:
         splitDescription = description.split("Roles:")
@@ -55,12 +55,12 @@ class EventCommands(commands.Cog):
 
         return result
 
-    async def ping_for_event(self, event):
+    async def ping_for_event(self, event, channel_id: int):
         start = event['start'].get('dateTime', event['start'].get('date'))
         dt = datetime.datetime.fromisoformat(start.replace('Z', '+00:00'))
         start_formatted = dt.strftime("%b %d, %Y at %I:%M %p")
 
-        channel = self.bot.get_channel(self.bot.meeting_channel_id)
+        channel = self.bot.get_channel(channel_id)
 
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
@@ -70,7 +70,7 @@ class EventCommands(commands.Cog):
         await channel.send(message)  # type: ignore
 
     @tasks.loop(seconds=10)
-    async def handle_event_pings(self):
+    async def handle_event_pings(self, calendar_channel_pair: CalendarChannelPair):
         now_time = datetime.datetime.now(datetime.timezone.utc)
         now = now_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
@@ -78,7 +78,7 @@ class EventCommands(commands.Cog):
         shouldPingUpperbound = new_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
         events_result = self.calendar_service.events().list(
-            calendarId=self.calendar_id,
+            calendarId=calendar_channel_pair.calendar_id,
             timeMin=now,
             timeMax=shouldPingUpperbound,
             maxResults=self.MAX_CONCUR_EVENT_READS,
@@ -91,7 +91,7 @@ class EventCommands(commands.Cog):
         for event in events:
             if event not in self.pinged_events:
                 self.pinged_events.append(event)
-                await self.ping_for_event(event)
+                await self.ping_for_event(event, calendar_channel_pair.channel_id)
 
         for event in self.pinged_events[:]:
             if event not in events:
@@ -102,18 +102,37 @@ class EventCommands(commands.Cog):
         await self.bot.wait_until_ready()
 
     @nextcord.slash_command(
-        name="set_meeting_channel",
-        description="Sets the current channel as the channel where meeting pings are sent."
+        name="set_lead_calendar_channel",
+        description="Sets the current channel as the channel where Lead Calendar pings are sent."
     )
-    async def set_meeting_channel(self, interaction: nextcord.Interaction):
-        if not self.contains_permitted_roles(interaction.user.roles):  # type: ignore
+    async def set_lead_calendar_channel(self, interaction: nextcord.Interaction):
+        if not self.bot.contains_permitted_roles(interaction.user.roles):  # type: ignore
             await interaction.response.send_message(
                 "You don't have permission to use this command.", ephemeral=True
             )
             return
 
-        self.bot.meeting_channel_id = interaction.channel_id
+        self.bot.calendar_channel_pairs[self.bot.LEADS_CALENDAR_CHANNEL].channel_id = interaction.channel_id # type: ignore
         self.pinged_events = []
         await interaction.response.send_message(
-            f'Successfully made the Meeting Channel "{interaction.channel.name}"!'  # type: ignore
+            f'Successfully made the Lead Calendar Channel "{interaction.channel.name}"!'  # type: ignore
         )
+
+    @nextcord.slash_command(
+        name="set_general_calendar_channel",
+        description="Sets the current channel as the channel where General Calendar pings are sent."
+    )
+    async def set_general_calendar_channel(self, interaction: nextcord.Interaction):
+        if not self.bot.contains_permitted_roles(interaction.user.roles):  # type: ignore
+            await interaction.response.send_message(
+                "You don't have permission to use this command.", ephemeral=True
+            )
+            return
+
+        self.bot.calendar_channel_pairs[self.bot.GENERAL_CALENDAR_CHANNEL].channel_id = interaction.channel_id # type: ignore
+        self.pinged_events = []
+        await interaction.response.send_message(
+            f'Successfully made the General Calendar Channel "{interaction.channel.name}"!'  # type: ignore
+        )
+
+

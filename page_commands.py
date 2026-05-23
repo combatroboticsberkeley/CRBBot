@@ -2,20 +2,18 @@ from nextcord.ext import commands
 import nextcord
 from pathlib import Path
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtim
+    from CRBBot import CRBBot
+
 class PageCommands(commands.Cog):
     PAGES_DIR = "pages/"
 
     def get_existing_page_names(self) -> list[str]:
         return [f.stem for f in Path('./' + self.PAGES_DIR).iterdir() if f.is_file()]
 
-    def __init__(self, bot: commands.Bot, permitted_roles: list[str]):
+    def __init__(self, bot: CRBBot):
         self.bot = bot
-        self.permitted_roles = permitted_roles
-
-    def contains_permitted_roles(self, roles):
-        if self.permitted_roles:
-            return any([role.name in self.permitted_roles for role in roles])
-        return True
 
     def read_page(self, name: str) -> str | None:
         """Returns the content of a page file, or None if it doesn't exist."""
@@ -63,7 +61,7 @@ class PageCommands(commands.Cog):
             required=True
         )
     ):
-        if not self.contains_permitted_roles(interaction.user.roles):  # type: ignore
+        if not self.bot.contains_permitted_roles(interaction.user.roles):  # type: ignore
             await interaction.response.send_message(
                 "You don't have permission to use this command.", ephemeral=True
             )
@@ -87,7 +85,7 @@ class PageCommands(commands.Cog):
             required=True
         )
     ):
-        if not self.contains_permitted_roles(interaction.user.roles):  # type: ignore
+        if not self.bot.contains_permitted_roles(interaction.user.roles):  # type: ignore
             await interaction.response.send_message(
                 "You don't have permission to use this command.", ephemeral=True
             )
