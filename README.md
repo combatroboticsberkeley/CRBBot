@@ -43,11 +43,11 @@ Roles:
 @CupcakeBakers
 ```
 
-Here is what this example event looks like in Google Calendar:
+Here is what this example event looks like in various places:
 
 <img src="./images/BakingCupcakesWithTy1.png" width="400">
 
-> Creating "Baking Cupcakes with Ty"
+> Creating "Baking Cupcakes with Ty" on Google Calendar
 
 
 <img src="./images/BakingCupcakesWithTy2.png" width="400">
