@@ -89,6 +89,8 @@ when done, run ```sudo shutdown -h now``` to shut the raspberry pi 0 down before
 ### Other Helpful Commands
 ```deactivate``` exits you from the virtual environment (in Python) 
 
+```exit``` exits you from being ssh'ed
+
 ---
 
 ## Slash Commands
