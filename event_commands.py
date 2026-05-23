@@ -111,7 +111,7 @@ class EventCommands(commands.Cog):
                 self.pinged_events[calendar_channel_pair.calendar_id] = calendar_id_pinged_events
                 await self.ping_for_event(event, calendar_channel_pair.channel_id)
 
-        for event in self.pinged_events[calendar_channel_pair.calendar_id][:]:
+        for event in self.pinged_events.get(calendar_channel_pair.calendar_id, [])[:]:
             if event not in events:
                 self.pinged_events[calendar_channel_pair.calendar_id].remove(event)
 
