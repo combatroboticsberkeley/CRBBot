@@ -2,9 +2,9 @@ from nextcord.ext import commands
 import nextcord
 from pathlib import Path
 
-from typing import TYPE_CHECKING
-if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtim
-    from CRBBot import CRBBot
+# from typing import TYPE_CHECKING
+# if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtim
+#     from CRBBot import CRBBot
 
 class PageCommands(commands.Cog):
     PAGES_DIR = "pages/"
@@ -12,7 +12,7 @@ class PageCommands(commands.Cog):
     def get_existing_page_names(self) -> list[str]:
         return [f.stem for f in Path('./' + self.PAGES_DIR).iterdir() if f.is_file()]
 
-    def __init__(self, bot: CRBBot):
+    def __init__(self, bot):
         self.bot = bot
 
     def read_page(self, name: str) -> str | None:

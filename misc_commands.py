@@ -4,9 +4,9 @@ import nextcord
 import asyncio
 import re
 
-from typing import TYPE_CHECKING
-if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtim
-    from CRBBot import CRBBot
+# from typing import TYPE_CHECKING
+# if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtim
+#     from CRBBot import CRBBot
 
 class MiscCommands(commands.Cog):
 
@@ -18,7 +18,7 @@ class MiscCommands(commands.Cog):
         "s": 1
     }
 
-    def __init__(self, bot: CRBBot):
+    def __init__(self, bot):
         self.bot = bot
 
     async def parse_delay_amount_to_secs(self, delay: str) -> int:
