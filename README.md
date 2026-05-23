@@ -114,6 +114,7 @@ Pages allow for the storing and retrieval of any pages of text within the server
 CRBBot is integrated with Google Calendar to ping channels before events start.
 
 `/set_lead_calendar_channel` -> Sets the current channel as the channel where Lead Calendar pings are sent.
+
 `/set_general_calendar_channel` -> Sets the current channel as the channel where General Calendar pings are sent.
 
 ```
