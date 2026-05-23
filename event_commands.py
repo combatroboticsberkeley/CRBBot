@@ -84,14 +84,19 @@ class EventCommands(commands.Cog):
         new_time = now_time + timedelta(minutes=self.MINUTES_EARLY_FOR_PING)
         shouldPingUpperbound = new_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
-        events_result = self.calendar_service.events().list(
-            calendarId=calendar_channel_pair.calendar_id,
-            timeMin=now,
-            timeMax=shouldPingUpperbound,
-            maxResults=self.MAX_CONCUR_EVENT_READS,
-            singleEvents=True,
-            orderBy='startTime'
-        ).execute()
+        try:
+            events_result = self.calendar_service.events().list(
+                calendarId=calendar_channel_pair.calendar_id,
+                timeMin=now,
+                timeMax=shouldPingUpperbound,
+                maxResults=self.MAX_CONCUR_EVENT_READS,
+                singleEvents=True,
+                orderBy='startTime'
+            ).execute()
+        except Exception as e:
+            print(f"[EventCommands] Failed to fetch events for calendar "
+                f"{calendar_channel_pair.calendar_id}: {e}")
+            return
 
         events = events_result.get('items', [])
 
