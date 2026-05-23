@@ -1,1 +1,1 @@
-here's 
+here's a [link](https://github.com/combatroboticsberkeley/CRBBot/blob/main/README.md) to CRBBot's README.md which explains what the bot can do!

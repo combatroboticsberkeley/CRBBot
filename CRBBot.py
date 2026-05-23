@@ -7,6 +7,8 @@ from misc_commands import MiscCommands
 
 from CalendarChannelPair import CalendarChannelPair
 
+import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -47,4 +49,4 @@ crb_bot.add_cog(PageCommands(crb_bot))
 crb_bot.add_cog(EventCommands(crb_bot, crb_bot.SERVICE_ACCOUNT_FILE))
 crb_bot.add_cog(MiscCommands(crb_bot))
 
-crb_bot.run(BOT_TOKEN)
+crb_bot.run(os.getenv("BOT_TOKEN")) #type: ignore
