@@ -69,7 +69,7 @@ rasberry pi 0 ip: 192.168.50.107 (ip subject to change when we go back to Berkel
 
 user: combatroboticsberkeley
 
-pass: crb123
+pass: REDACTED (nice try)
 
 ---
 
