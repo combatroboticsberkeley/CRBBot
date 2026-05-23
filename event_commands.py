@@ -20,7 +20,7 @@ class EventCommands(commands.Cog):
 
     def __init__(self, bot, service_account_file: str):
         self.bot = bot
-        self.pinged_events = []
+        self.pinged_events:dict = {} # stores a calendar_id : [list of pinged events] pair for each calendar_id in self.bot.calendar_channel_pairs
 
         SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
         credentials = Credentials.from_service_account_file(
@@ -105,13 +105,15 @@ class EventCommands(commands.Cog):
         # print(f'{calendar_channel_pair.calendar_id} has {events} events')
 
         for event in events:
-            if event not in self.pinged_events:
-                self.pinged_events.append(event)
+            if event not in self.pinged_events.get(calendar_channel_pair.calendar_id, []):
+                calendar_id_pinged_events = self.pinged_events.get(calendar_channel_pair.calendar_id, [])
+                calendar_id_pinged_events.append(event)
+                self.pinged_events[calendar_channel_pair.calendar_id] = calendar_id_pinged_events
                 await self.ping_for_event(event, calendar_channel_pair.channel_id)
 
-        for event in self.pinged_events[:]:
+        for event in self.pinged_events[calendar_channel_pair.calendar_id][:]:
             if event not in events:
-                self.pinged_events.remove(event)
+                self.pinged_events[calendar_channel_pair.calendar_id].remove(event)
 
     async def before_handle_event_pings(self):
         await self.bot.wait_until_ready()
@@ -128,7 +130,7 @@ class EventCommands(commands.Cog):
             return
 
         self.bot.calendar_channel_pairs[self.bot.LEADS_CALENDAR_CHANNEL].channel_id = interaction.channel_id # type: ignore
-        self.pinged_events = []
+        self.pinged_events.get(self.bot.calendar_channel_pairs[self.bot.LEADS_CALENDAR_CHANNEL].calendar_id,[]).clear()
         await interaction.response.send_message(
             f'Successfully made the Lead Calendar Channel "{interaction.channel.name}"!'  # type: ignore
         )
@@ -145,7 +147,7 @@ class EventCommands(commands.Cog):
             return
 
         self.bot.calendar_channel_pairs[self.bot.GENERAL_CALENDAR_CHANNEL].channel_id = interaction.channel_id # type: ignore
-        self.pinged_events = []
+        self.pinged_events.get(self.bot.calendar_channel_pairs[self.bot.GENERAL_CALENDAR_CHANNEL].calendar_id,[]).clear()
         await interaction.response.send_message(
             f'Successfully made the General Calendar Channel "{interaction.channel.name}"!'  # type: ignore
         )
