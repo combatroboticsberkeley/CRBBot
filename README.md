@@ -62,37 +62,6 @@ Here is what this example event looks like in various places:
 
 ---
 
-## CRBBot Setup (On the Raspberry Pi 0)
-
-### Important Info
-rasberry pi 0 ip: 192.168.50.107 (ip subject to change when we go back to Berkeley)
-
-user: combatroboticsberkeley
-
-pass: REDACTED (nice try)
-
----
-
-### Setup 
-to ssh into it do ```ssh combatroboticsberkeley@192.168.50.107``` from a cmd and sign in (might need to press enter a couple times after entering password)
-
-then navigate to github_repos/CRBBot (can do ```cd github_repos/CRBBot```)
-
-then run ```source env/bin/activate``` to enter virtual env
-
-then run ```python3 CRBBot.py``` to start the bot
-
-when done, run ```sudo shutdown -h now``` to shut the raspberry pi 0 down before unplugging it
-
----
-
-### Other Helpful Commands
-```deactivate``` exits you from the virtual environment (in Python) 
-
-```exit``` exits you from being ssh'ed
-
----
-
 ## Slash Commands
 
 ### Pages
@@ -140,3 +109,34 @@ Delay format: combine `w` (weeks), `d` (days), `h` (hours), `m` (minutes), `s` (
 /remindme delay:2d message:Order motor controllers and ESCs
 /remindme delay:45s message:If I'm alive to see this reminder then the test box didn't blow up
 ```
+
+## CRBBot Setup (On the Raspberry Pi 0)
+
+### Important Info
+rasberry pi 0 ip: 192.168.50.107 (ip subject to change when we go back to Berkeley)
+
+user: combatroboticsberkeley
+
+pass: REDACTED (nice try)
+
+---
+
+### Setup 
+to ssh into it do ```ssh combatroboticsberkeley@192.168.50.107``` from a cmd and sign in (might need to press enter a couple times after entering password)
+
+then navigate to github_repos/CRBBot (can do ```cd github_repos/CRBBot```)
+
+then run ```source env/bin/activate``` to enter virtual env
+
+then run ```python3 CRBBot.py``` to start the bot
+
+when done, run ```sudo shutdown -h now``` to shut the raspberry pi 0 down before unplugging it
+
+---
+
+### Other Helpful Commands
+```deactivate``` exits you from the virtual environment (in Python) 
+
+```exit``` exits you from being ssh'ed
+
+---
