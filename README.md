@@ -110,6 +110,8 @@ Delay format: combine `w` (weeks), `d` (days), `h` (hours), `m` (minutes), `s` (
 /remindme delay:45s message:If I'm alive to see this reminder then the test box didn't blow up
 ```
 
+---
+
 ## CRBBot Setup (On the Raspberry Pi 0)
 
 ### Important Info
