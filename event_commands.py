@@ -15,9 +15,9 @@ from CalendarChannelPair import CalendarChannelPair
 
 class EventCommands(commands.Cog):
     CHECK_FOR_EVENT_INTERVAL = 10  # in secs
-    MAX_CONCUR_EVENT_READS = 10
+    MAX_CONCUR_EVENT_READS = 30
     MINUTES_INTO_FUTURE_TO_CHECK = 2880
-    MINUTES_EARLY_TO_PING = [1440, 30] # 1440 is 60*24 minutes = a day - Cai, list must be in descending order for the code to work
+    MINUTES_EARLY_TO_PING = {30 : "occurs in <30 min", 1440 : "occurs in <24 hrs"} # 1440 is 60*24 minutes = a day - Cai,
 
     def __init__(self, bot, service_account_file: str):
         self.bot = bot
@@ -64,7 +64,8 @@ class EventCommands(commands.Cog):
 
         return result
 
-    async def ping_for_event(self, event, channel_id: int):
+    async def ping_for_event(self, event_info, channel_id: int):
+        event = event_info[1]
         start = event['start'].get('dateTime', event['start'].get('date'))
         dt = datetime.datetime.fromisoformat(start.replace('Z', '+00:00'))
         start_formatted = dt.strftime("%b %d, %Y at %I:%M %p")
@@ -74,7 +75,7 @@ class EventCommands(commands.Cog):
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins on {start_formatted} \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
+        message = f"# {title} begins on {start_formatted} ({self.MINUTES_EARLY_TO_PING[event_info[0]]}) \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
 
         # print(f"Attempted to send {message} into {channel.name}")
 
@@ -85,13 +86,16 @@ class EventCommands(commands.Cog):
         start_date = datetime.datetime.fromisoformat(start.replace('Z', '+00:00'))
         return start_date - timedelta(minutes=x)
 
-    def should_ping_this_event(self, event):
+    def generate_event_pings(self, event):
         now_time = datetime.datetime.now(datetime.timezone.utc)
         for minutes_early_to_ping in self.MINUTES_EARLY_TO_PING:
            if now_time > self.get_date_x_minutes_before_event(event, minutes_early_to_ping):
-               return (minutes_early_to_ping, event) 
-        return ()
+               yield (minutes_early_to_ping, event) 
                
+    def gather_pingable_events(self, events):
+        for event in events:
+            yield from self.generate_event_pings(event)
+
     async def handle_event_pings(self, calendar_channel_pair: CalendarChannelPair):
         now_time = datetime.datetime.now(datetime.timezone.utc)
         now = now_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
@@ -117,16 +121,18 @@ class EventCommands(commands.Cog):
 
         # print(f'{calendar_channel_pair.calendar_id} has {events} events')
 
-        for event in map(self.should_ping_this_event, events): #type: ignore
-            if event != () and event not in self.pinged_events.get(calendar_channel_pair.calendar_id, []):
-                calendar_id_pinged_events = self.pinged_events.get(calendar_channel_pair.calendar_id, [])
-                calendar_id_pinged_events.append(event)
-                self.pinged_events[calendar_channel_pair.calendar_id] = calendar_id_pinged_events
-                await self.ping_for_event(event, calendar_channel_pair.channel_id)
+        pingable_events = list(self.gather_pingable_events(events))
 
-        for event in self.pinged_events.get(calendar_channel_pair.calendar_id, [])[:]:
-            if event not in map(self.should_ping_this_event, events):
-                self.pinged_events[calendar_channel_pair.calendar_id].remove(event)
+        for event_info in pingable_events: #type: ignore
+            if event_info not in self.pinged_events.get(calendar_channel_pair.calendar_id, []):
+                calendar_id_pinged_events = self.pinged_events.get(calendar_channel_pair.calendar_id, [])
+                calendar_id_pinged_events.append(event_info)
+                self.pinged_events[calendar_channel_pair.calendar_id] = calendar_id_pinged_events
+                await self.ping_for_event(event_info, calendar_channel_pair.channel_id) #type: ignore
+
+        for event_info in self.pinged_events.get(calendar_channel_pair.calendar_id, [])[:]:
+            if event_info not in pingable_events:
+                self.pinged_events[calendar_channel_pair.calendar_id].remove(event_info)
 
     async def before_handle_event_pings(self):
         await self.bot.wait_until_ready()
