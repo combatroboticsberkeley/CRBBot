@@ -16,7 +16,8 @@ from CalendarChannelPair import CalendarChannelPair
 class EventCommands(commands.Cog):
     CHECK_FOR_EVENT_INTERVAL = 10  # in secs
     MAX_CONCUR_EVENT_READS = 10
-    MINUTES_EARLY_FOR_PING = 1
+    MINUTES_INTO_FUTURE_TO_CHECK = 2880
+    MINUTES_EARLY_TO_PING = [1440, 30] # 1440 is 60*24 minutes = a day - Cai, list must be in descending order for the code to work
 
     def __init__(self, bot, service_account_file: str):
         self.bot = bot
@@ -79,11 +80,23 @@ class EventCommands(commands.Cog):
 
         await channel.send(message)  # type: ignore
 
+    def get_date_x_minutes_before_event(self, event, x):
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        start_date = datetime.datetime.fromisoformat(start.replace('Z', '+00:00'))
+        return start_date - timedelta(minutes=x)
+
+    def should_ping_this_event(self, event):
+        now_time = datetime.datetime.now(datetime.timezone.utc)
+        for minutes_early_to_ping in self.MINUTES_EARLY_TO_PING:
+           if now_time > self.get_date_x_minutes_before_event(event, minutes_early_to_ping):
+               return (minutes_early_to_ping, event) 
+        return ()
+               
     async def handle_event_pings(self, calendar_channel_pair: CalendarChannelPair):
         now_time = datetime.datetime.now(datetime.timezone.utc)
         now = now_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
-        new_time = now_time + timedelta(minutes=self.MINUTES_EARLY_FOR_PING)
+        new_time = now_time + timedelta(minutes=self.MINUTES_INTO_FUTURE_TO_CHECK)
         shouldPingUpperbound = new_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
         try:
@@ -104,15 +117,15 @@ class EventCommands(commands.Cog):
 
         # print(f'{calendar_channel_pair.calendar_id} has {events} events')
 
-        for event in events:
-            if event not in self.pinged_events.get(calendar_channel_pair.calendar_id, []):
+        for event in map(self.should_ping_this_event, events): #type: ignore
+            if event != () and event not in self.pinged_events.get(calendar_channel_pair.calendar_id, []):
                 calendar_id_pinged_events = self.pinged_events.get(calendar_channel_pair.calendar_id, [])
                 calendar_id_pinged_events.append(event)
                 self.pinged_events[calendar_channel_pair.calendar_id] = calendar_id_pinged_events
                 await self.ping_for_event(event, calendar_channel_pair.channel_id)
 
         for event in self.pinged_events.get(calendar_channel_pair.calendar_id, [])[:]:
-            if event not in events:
+            if event not in map(self.should_ping_this_event, events):
                 self.pinged_events[calendar_channel_pair.calendar_id].remove(event)
 
     async def before_handle_event_pings(self):
@@ -132,7 +145,7 @@ class EventCommands(commands.Cog):
         self.bot.calendar_channel_pairs[self.bot.LEADS_CALENDAR_CHANNEL].channel_id = interaction.channel_id # type: ignore
         self.pinged_events.get(self.bot.calendar_channel_pairs[self.bot.LEADS_CALENDAR_CHANNEL].calendar_id,[]).clear()
         await interaction.response.send_message(
-            f'Successfully made the Lead Calendar Channel "{interaction.channel.name}"!'  # type: ignore
+            f'Successfully made the Lead Calendar Channel "{interaction.channel.name}"!', ephemeral=True  # type: ignore
         )
 
     @nextcord.slash_command(
@@ -149,5 +162,5 @@ class EventCommands(commands.Cog):
         self.bot.calendar_channel_pairs[self.bot.GENERAL_CALENDAR_CHANNEL].channel_id = interaction.channel_id # type: ignore
         self.pinged_events.get(self.bot.calendar_channel_pairs[self.bot.GENERAL_CALENDAR_CHANNEL].calendar_id,[]).clear()
         await interaction.response.send_message(
-            f'Successfully made the General Calendar Channel "{interaction.channel.name}"!'  # type: ignore
+            f'Successfully made the General Calendar Channel "{interaction.channel.name}"!', ephemeral=True  # type: ignore
         )

@@ -70,7 +70,7 @@ class PageCommands(commands.Cog):
         filename = name + ".txt"
         Path(self.PAGES_DIR + filename).write_text(text)
 
-        await interaction.response.send_message(f'Successfully saved page "{name}"!')
+        await interaction.response.send_message(f'Successfully saved page "{name}"!', ephemeral=True)
 
     @nextcord.slash_command(
         name="del_page",
@@ -99,7 +99,7 @@ class PageCommands(commands.Cog):
             return
 
         filepath.unlink()
-        await interaction.response.send_message(f'Successfully deleted page "{name}"!')
+        await interaction.response.send_message(f'Successfully deleted page "{name}"!', ephemeral=True)
 
     @nextcord.slash_command(
         name="list_pages",
@@ -109,8 +109,8 @@ class PageCommands(commands.Cog):
         names = self.get_existing_page_names()
 
         if not names:
-            await interaction.response.send_message("No pages have been saved yet.")
+            await interaction.response.send_message("No pages have been saved yet.", ephemeral=True)
             return
 
         result = "All Pages:\n" + "\n".join(names) + "\n"
-        await interaction.response.send_message(result)
+        await interaction.response.send_message(result, ephemeral=True)
