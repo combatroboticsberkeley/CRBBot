@@ -3,7 +3,7 @@ import nextcord
 from pathlib import Path
 
 # from typing import TYPE_CHECKING
-# if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtim
+# if TYPE_CHECKING: # This only runs for type checkers, preventing circular errors at runtime
 #     from CRBBot import CRBBot
 
 class PageCommands(commands.Cog):
