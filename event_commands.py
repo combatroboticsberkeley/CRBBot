@@ -17,7 +17,7 @@ class EventCommands(commands.Cog):
     CHECK_FOR_EVENT_INTERVAL = 10  # in secs
     MAX_CONCUR_EVENT_READS = 30
     MINUTES_INTO_FUTURE_TO_CHECK = 2880
-    MINUTES_EARLY_TO_PING = {30 : "occurs in <30 min", 1440 : "occurs in <24 hrs"} # 1440 is 60*24 minutes = a day - Cai,
+    MINUTES_EARLY_TO_PING = {30 : "today", 1440 : "tomorrow"} # 1440 is 60*24 minutes = a day - Cai,
 
     def __init__(self, bot, service_account_file: str):
         self.bot = bot
@@ -68,14 +68,17 @@ class EventCommands(commands.Cog):
         event = event_info[1]
         start = event['start'].get('dateTime', event['start'].get('date'))
         dt = datetime.datetime.fromisoformat(start.replace('Z', '+00:00'))
-        start_formatted = dt.strftime("%b %d, %Y at %I:%M %p")
+        # start_formatted = dt.strftime("%b %d, %Y at %I:%M %p")
+        time_formatted = f'<t:{int(dt.timestamp())}:t>'
+        date_formatted = f'<t:{int(dt.timestamp())}:d>'
+        relative_formatted = f'<t:{int(dt.timestamp())}:R>'
 
         channel = self.bot.get_channel(channel_id)
 
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins on {start_formatted} ({self.MINUTES_EARLY_TO_PING[event_info[0]]}) \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
+        message = f"# {title} begins {self.MINUTES_EARLY_TO_PING[event_info[0]]} on {date_formatted} at {time_formatted} (in {relative_formatted}) \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
 
         # print(f"Attempted to send {message} into {channel.name}")
 
