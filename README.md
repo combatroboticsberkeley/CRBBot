@@ -130,9 +130,13 @@ then navigate to github_repos/CRBBot (can do ```cd github_repos/CRBBot```)
 
 then run ```source env/bin/activate``` to enter virtual env
 
-then run ```python3 CRBBot.py``` to start the bot
+then run ```nohup python3 CRBBot.py &``` to start the bot (the nohup part is necessary so the script doesn't stop running when you stop ssh-ing)
 
-when done, run ```sudo shutdown -h now``` to shut the raspberry pi 0 down before unplugging it
+to deactivate the script when running first type ```ps aux | grep "CRBBot.py"``` then use the leftmost number from the line that doesn't have "grep" in it and do ```kill [that_number_here]```
+
+if you are done ssh-ing then type ```exit``` to stop ssh-ing
+
+when you want to unplug the raspberry pi 0, first run ```sudo shutdown -h now``` and wait for its green light to turn off before unplugging it
 
 ---
 
