@@ -143,6 +143,4 @@ when you want to unplug the raspberry pi 0, first run ```sudo shutdown -h now```
 ### Other Helpful Commands
 ```deactivate``` exits you from the virtual environment (in Python) 
 
-```exit``` exits you from being ssh'ed
-
 ---
