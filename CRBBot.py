@@ -33,6 +33,7 @@ class CRBBot(commands.Bot):
         intents.message_content = True 
         super().__init__(command_prefix=CRBBot.COMMAND_PREFIX, intents=intents)
 
+        self.events_to_remove_pings_from = 0
         self.calendar_channel_pairs = CRBBot.DEFAULT_CALENDAR_CHANNEL_PAIRS
         self.permitted_roles = CRBBot.DEFAULT_PERMITTED_ROLES
 

@@ -79,11 +79,15 @@ class EventCommands(commands.Cog):
         description = event.get('description', "This event had no description :(")
 
         message = f"# {title} begins {self.MINUTES_EARLY_TO_PING[event_info[0]]} on {date_formatted} at {time_formatted} ({relative_formatted}) \n"  # type: ignore
-        if "Roles:" in description:
-            message += self.parse_event_description(description, channel.guild)
-        else: # allows for the description to just be @Role1 @Role2 @Role3
-            description = "\n".join(["@"+ role.strip() for role in description.split("@")[1:]])
-            message += self.parse_event_description("Roles:\n" + description, channel.guild)
+
+        if self.bot.events_to_remove_pings_from > 0:
+            self.bot.events_to_remove_pings_from -= 1
+        else:
+            if "Roles:" in description:
+                message += self.parse_event_description(description, channel.guild)
+            else: # allows for the description to just be @Role1 @Role2 @Role3
+                description = "\n".join(["@"+ role.strip() for role in description.split("@")[1:]])
+                message += self.parse_event_description("Roles:\n" + description, channel.guild)
 
         # print(f"Attempted to send {message} into {channel.name}")
 
@@ -177,4 +181,21 @@ class EventCommands(commands.Cog):
         self.pinged_events.get(self.bot.calendar_channel_pairs[self.bot.GENERAL_CALENDAR_CHANNEL].calendar_id,[]).clear()
         await interaction.response.send_message(
             f'Successfully made the General Calendar Channel "{interaction.channel.name}"!', ephemeral=True  # type: ignore
+        )
+
+    @nextcord.slash_command(
+        name="remove_pings_from_next_event",
+        description="Prevents the first calendar event that CRBBot pings from containing any pings."
+    )
+    async def remove_event_pings_from_next_event(self, interaction: nextcord.Interaction):
+        if not self.bot.contains_permitted_roles(interaction.user.roles):  # type: ignore
+            await interaction.response.send_message(
+                "You don't have permission to use this command.", ephemeral=True
+            )
+            return
+        
+        self.bot.events_to_remove_pings_from += 1
+
+        await interaction.response.send_message(
+            f'Successfully will remove the next {self.bot.events_to_remove_pings_from} calendar events\' pings!', ephemeral=True  # type: ignore
         )
