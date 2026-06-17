@@ -78,7 +78,12 @@ class EventCommands(commands.Cog):
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins {self.MINUTES_EARLY_TO_PING[event_info[0]]} on {date_formatted} at {time_formatted} (in {relative_formatted}) \n{self.parse_event_description(description, channel.guild)}"  # type: ignore
+        message = f"# {title} begins {self.MINUTES_EARLY_TO_PING[event_info[0]]} on {date_formatted} at {time_formatted} (in {relative_formatted}) \n"  # type: ignore
+        if "Roles:" in description:
+            message += self.parse_event_description(description, channel.guild)
+        else: # allows for the description to just be @Role1 @Role2 @Role3
+            description = "\n".join(["@"+ role[:-1] for role in description.split("@")])
+            message += self.parse_event_description("Roles:\n" + description, channel.guild)
 
         # print(f"Attempted to send {message} into {channel.name}")
 
