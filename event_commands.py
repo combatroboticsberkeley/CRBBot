@@ -78,7 +78,7 @@ class EventCommands(commands.Cog):
         title = event.get('summary', 'This event had no title :(')
         description = event.get('description', "This event had no description :(")
 
-        message = f"# {title} begins {self.MINUTES_EARLY_TO_PING[event_info[0]]} on {date_formatted} at {time_formatted} (in {relative_formatted}) \n"  # type: ignore
+        message = f"# {title} begins {self.MINUTES_EARLY_TO_PING[event_info[0]]} on {date_formatted} at {time_formatted} ({relative_formatted}) \n"  # type: ignore
         if "Roles:" in description:
             message += self.parse_event_description(description, channel.guild)
         else: # allows for the description to just be @Role1 @Role2 @Role3
