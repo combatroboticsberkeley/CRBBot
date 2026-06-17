@@ -82,7 +82,7 @@ class EventCommands(commands.Cog):
         if "Roles:" in description:
             message += self.parse_event_description(description, channel.guild)
         else: # allows for the description to just be @Role1 @Role2 @Role3
-            description = "\n".join(["@"+ role[:-1] for role in description.split("@")])
+            description = "\n".join(["@"+ role.strip() for role in description.split("@")[1:]])
             message += self.parse_event_description("Roles:\n" + description, channel.guild)
 
         # print(f"Attempted to send {message} into {channel.name}")
