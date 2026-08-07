@@ -124,7 +124,7 @@ pass: REDACTED (nice try)
 ---
 
 ### Setup 
-to ssh into it do ```ssh combatroboticsberkeley@192.168.50.107``` from a cmd and sign in (might need to press enter a couple times after entering password)
+to ssh into it do ```ssh combatroboticsberkeley@192.168.50.108``` from a cmd and sign in (might need to press enter a couple times after entering password)
 
 then navigate to github_repos/CRBBot (can do ```cd github_repos/CRBBot```)
 
