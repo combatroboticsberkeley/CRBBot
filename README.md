@@ -115,7 +115,7 @@ Delay format: combine `w` (weeks), `d` (days), `h` (hours), `m` (minutes), `s` (
 ## CRBBot Setup (On the Raspberry Pi 0)
 
 ### Important Info
-rasberry pi 0 ip: 192.168.50.107 (ip subject to change when we go back to Berkeley)
+rasberry pi 0 ip: 192.168.50.108 (ip subject to change when we go back to Berkeley)
 
 user: combatroboticsberkeley
 
