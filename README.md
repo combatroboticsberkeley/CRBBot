@@ -115,7 +115,7 @@ Delay format: combine `w` (weeks), `d` (days), `h` (hours), `m` (minutes), `s` (
 ## CRBBot Setup (On the Raspberry Pi 0)
 
 ### Important Info
-rasberry pi 0 ip: 192.168.50.107 (ip subject to change when we go back to Berkeley)
+rasberry pi 0 ip: 192.168.50.108 (ip subject to change when we go back to Berkeley)
 
 user: combatroboticsberkeley
 
@@ -124,7 +124,7 @@ pass: REDACTED (nice try)
 ---
 
 ### Setup 
-to ssh into it do ```ssh combatroboticsberkeley@192.168.50.107``` from a cmd and sign in (might need to press enter a couple times after entering password)
+to ssh into it do ```ssh combatroboticsberkeley@192.168.50.108``` from a cmd and sign in (might need to press enter a couple times after entering password)
 
 then navigate to github_repos/CRBBot (can do ```cd github_repos/CRBBot```)
 
