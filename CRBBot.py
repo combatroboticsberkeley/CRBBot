@@ -46,7 +46,7 @@ class CRBBot(commands.Bot):
         print(f'Logged in successfully as {self.user} (ID: {self.user.id})') #type: ignore
 
 crb_bot = CRBBot()
-crb_bot.add_cog(PageCommands(crb_bot))
+# crb_bot.add_cog(PageCommands(crb_bot))
 crb_bot.add_cog(EventCommands(crb_bot, crb_bot.SERVICE_ACCOUNT_FILE))
 crb_bot.add_cog(MiscCommands(crb_bot))
 

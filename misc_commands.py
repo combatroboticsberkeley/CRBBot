@@ -38,10 +38,10 @@ class MiscCommands(commands.Cog):
         return total_seconds
 
     @nextcord.slash_command(
-        name="remind",
+        name="remindthem",
         description="Reminds the mentioned users of a message after a delay (e.g. 1h30m, 2d, 45s)."
     )
-    async def remind(
+    async def remindthem(
         self,
         interaction: nextcord.Interaction,
         delay: str = nextcord.SlashOption(
