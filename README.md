@@ -99,13 +99,13 @@ CRBBot is integrated with Google Calendar to ping channels before events start.
 
 ### Reminders
 
-`/remind <delay> <remindees> <message>` -> Remind one or more mentioned users after a delay 
+`/remindthem <delay> <remindees> <message>` -> Remind one or more mentioned users after a delay 
 `/remindme <delay> <message>` -> Remind yourself after a delay 
 
 Delay format: combine `w` (weeks), `d` (days), `h` (hours), `m` (minutes), `s` (seconds).
 
 ```
-/remind delay:1h30m remindees:@Kyler @Ty message:Kyler please pay back Ty's money
+/remindthem delay:1h30m remindees:@Kyler @Ty message:Kyler please pay back Ty's money
 /remindme delay:2d message:Order motor controllers and ESCs
 /remindme delay:45s message:If I'm alive to see this reminder then the test box didn't blow up
 ```
