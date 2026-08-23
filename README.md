@@ -64,7 +64,7 @@ Here is what this example event looks like in various places:
 
 ## Slash Commands
 
-### Pages
+### Pages (NOT CURRENTLY AVAILABLE)
 Pages allow for the storing and retrieval of any pages of text within the server. Saving/deleting pages require a permitted role.
 
 `/view_page <name>` -> Display a saved page 
